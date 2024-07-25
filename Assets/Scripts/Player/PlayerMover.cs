@@ -8,7 +8,8 @@ public class PlayerMover : MonoBehaviour
 
     public void MovePlayer(float percentOffsetX)
     {
-        _model.localPosition += new Vector3(percentOffsetX * Time.deltaTime * _horizontalSpeed, 0, 0);
+        float sign = Mathf.Sign(percentOffsetX);
+        _model.localPosition += new Vector3(Time.deltaTime * _horizontalSpeed * sign, 0, 0);
         float positionX = Mathf.Clamp(_model.localPosition.x, -_maxOffsetUnits, _maxOffsetUnits);
         _model.localPosition = new Vector3(positionX, 0, 0);
     }
