@@ -10,8 +10,6 @@ public class PlayerTriggerHandler : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject.name);
-
         if (other.TryGetComponent(out IInteractable collectable))
         {
             collectable.Interact(this);

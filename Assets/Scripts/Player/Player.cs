@@ -1,13 +1,14 @@
+using ButchersGames;
 using PathCreation.Examples;
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Wealth), typeof(PathFollower), typeof(PlayerModelChanger))]
-[RequireComponent(typeof(Wallet), typeof(PlayerMover))]
+[RequireComponent(typeof(Wallet), typeof(PlayerMover), typeof(PlayerAudio))]
 public class Player : MonoBehaviour
 {
     [SerializeField] private PlayerAnimator _playerAnimator;
     [SerializeField] private LevelLauncher _launcher;
+    [SerializeField] private LevelManager _levelManager;
     [SerializeField] private InputReader _input;
     [SerializeField] private float _startingSpeed;
 
@@ -15,8 +16,9 @@ public class Player : MonoBehaviour
     private PlayerModelChanger _modelChanger;
     private PathFollower _pathFollower;
     private PlayerMover _mover;
-
-    public event Action SkinChanged;
+    private PlayerAudio _audio;
+    private Level _currentLevel;
+    private bool _canMove = true;
 
     private void Awake()
     {
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
         _modelChanger = GetComponent<PlayerModelChanger>();
         _mover = GetComponent<PlayerMover>();
         _pathFollower = GetComponent<PathFollower>();
+        _audio = GetComponent<PlayerAudio>();
     }
 
     private void OnEnable()
@@ -33,6 +36,7 @@ public class Player : MonoBehaviour
         _wealth.WealthChanged += OnWealthChanged;
         _launcher.Started += StartMoving;
         _input.Clicked += MoveHorizontal;
+        _levelManager.OnLevelStarted += OnLevelStart;
     }
 
     private void Start()
@@ -47,11 +51,20 @@ public class Player : MonoBehaviour
         _wealth.WealthChanged += OnWealthChanged;
         _launcher.Started -= StartMoving;
         _input.Clicked -= MoveHorizontal;
+        _levelManager.OnLevelStarted += OnLevelStart;
+    }
+
+    public void OnLevelStart(Level level)
+    {
+        _currentLevel = level;
+        Reset();
     }
 
     public void StopMoving()
     {
         _pathFollower.speed = 0;
+        _canMove = false;
+        _audio.StopPlayingSteps();
     }
 
     public void Win()
@@ -67,13 +80,18 @@ public class Player : MonoBehaviour
 
     private void MoveHorizontal(float percentOffsetX)
     {
-        _mover.MovePlayer(percentOffsetX);
+        if (_canMove)
+        {
+            _mover.MovePlayer(percentOffsetX);
+        }
     }
 
     private void StartMoving()
     {
         _pathFollower.speed = _startingSpeed;
         _playerAnimator.OnMove();
+        _canMove = true;
+        _audio.StartPlayingSteps();
     }
 
     private void Lose()
@@ -84,5 +102,13 @@ public class Player : MonoBehaviour
     private void OnWealthChanged(WealthLevel level, float currentWealth, float maxWealth)
     {
         _playerAnimator.OnWealthChange(currentWealth, maxWealth);
+    }
+
+    private void Reset()
+    {
+        transform.position = Vector3.zero;
+        _playerAnimator.Reset();
+        _wealth.Reset();
+        _pathFollower.pathCreator = _currentLevel.Path;
     }
 }

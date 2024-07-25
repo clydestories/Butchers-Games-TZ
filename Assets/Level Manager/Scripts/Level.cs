@@ -1,3 +1,4 @@
+using PathCreation;
 using UnityEngine;
 
 namespace ButchersGames
@@ -5,6 +6,9 @@ namespace ButchersGames
     public class Level : MonoBehaviour
     {
         [SerializeField] private Transform playerSpawnPoint;
+
+        public Transform PlayerSpawnPoint => playerSpawnPoint;
+        public PathCreator Path => GetComponentInChildren<PathCreator>();
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()

@@ -37,10 +37,7 @@ public class Wealth : MonoBehaviour
 
     private void Start()
     {
-        _level = _startingWealthLevel;
-        _wealth = _startingWealth;
-        UpdateLevel();
-        WealthChanged?.Invoke(_level, Value, _maxWealth);
+        Reset();
     }
 
     public void AddWealth(int amount)
@@ -69,6 +66,14 @@ public class Wealth : MonoBehaviour
             Lose();
         } 
 
+        UpdateLevel();
+        WealthChanged?.Invoke(_level, Value, _maxWealth);
+    }
+
+    public void Reset()
+    {
+        _level = _startingWealthLevel;
+        _wealth = _startingWealth;
         UpdateLevel();
         WealthChanged?.Invoke(_level, Value, _maxWealth);
     }

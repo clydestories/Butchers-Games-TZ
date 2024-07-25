@@ -29,7 +29,7 @@ namespace ButchersGames
         [SerializeField] LevelsList levels;
         public List<Level> Levels => levels.lvls;
 
-        public event Action OnLevelStarted;
+        public event Action<Level> OnLevelStarted;
 
 
         public void Init()
@@ -58,7 +58,7 @@ namespace ButchersGames
 
         public void StartLevel()
         {
-            OnLevelStarted?.Invoke();
+            OnLevelStarted?.Invoke(Levels[CurrentLevel]);
         }
 
         public void RestartLevel()
@@ -70,6 +70,7 @@ namespace ButchersGames
         {
             if (!editorMode) CurrentLevel++;
             SelectLevel(CurrentLevelIndex + 1);
+            StartLevel();
         }
 
         public void SelectLevel(int levelIndex, bool indexCheck = true)

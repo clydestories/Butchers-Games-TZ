@@ -40,4 +40,10 @@ public class PlayerAnimator : MonoBehaviour
     {
         _animator.SetFloat(Wealth, currentWealth / maxWealth);
     }
+
+    public void Reset()
+    {
+        _animator.Rebind();
+        _animator.Update(0);
+    }
 }

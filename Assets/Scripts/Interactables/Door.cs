@@ -8,6 +8,7 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private int _multiplier;
     [SerializeField] private Animator _animator;
     [SerializeField] private LevelEnder _ender;
+    [SerializeField] private AudioSource _audio;
 
     public void Interact(PlayerTriggerHandler player) 
     {
@@ -24,6 +25,7 @@ public class Door : MonoBehaviour, IInteractable
     private void OpenDoor()
     {
         _animator.SetTrigger(Open);
+        _audio.Play();
     }
 
     private void EndLevel()
